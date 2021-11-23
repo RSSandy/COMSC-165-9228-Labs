@@ -20,6 +20,8 @@ using std::right;
 #include <string>
 using std::string;
 
+//comment for git
+
 //data types
 struct Movie{
   string name;
