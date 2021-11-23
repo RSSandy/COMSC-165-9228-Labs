@@ -32,6 +32,7 @@ struct Movie{
   Movie *next;
 };
 
+//this is a queue struct
 struct Queue{
     Movie *front;
     Movie *rear;
