@@ -16,6 +16,12 @@ using std::endl;
 #include <string>
 using std::string;
 
+#include <cstring>
+using std::strcpy;
+
+#include <cctype>
+using std::tolower;
+
 //structs 
 struct Thing{
     string sayThis;
@@ -26,6 +32,7 @@ struct Thing{
 
 // Declaring function prototypes.
 void print_id(string lab_desc);
+bool inputValid(string &buffer);
 
 //tree layout
 /*
@@ -100,21 +107,43 @@ int main() {
   //loop through tree
   Thing *temp = top;
   string buffer;
+  string answer;
   while(true){
-      cout << temp->sayThis << endl;
-      if(temp->yes == 0 && temp->no == 0) break;
-      cout << "[yes / no] ";
+      if(temp->yes == 0 && temp->no == 0){
+          answer = temp->sayThis;
+          break;
+      }
+      
+      //input validation loop
+      while(true){
+        cout << temp->sayThis ;
+        cout << " [yes / no] ";
+        getline(cin, buffer); 
+        if(inputValid(buffer)) break;
+        else cout << "please enter [yes / no]" << endl;
+      }
 
-      getline(cin, buffer); //input validation
       if(buffer == "yes") temp = temp->yes;
       else if(buffer == "no") temp = temp->no;
   }
-  
+  cout << "Guess ready!" << endl;
+  cout << answer << endl;
 
   return 0;
 }
 
-
+//TO-DO: write fxn desc
+bool inputValid(string &buffer){
+    if(buffer.length() == 0 || buffer.length() > 3) return false;
+    else{
+        //convert to lowercase
+        for(int i = 0; i < buffer.length(); i++){
+            buffer[i] = tolower(buffer[i]);
+        }
+        if(buffer == "yes" || buffer == "no") return true;
+        else return false;
+    }   
+}//inputValid
 
 void print_id(string lab_desc) {
   cout << "Sandhya Nayar\n";
