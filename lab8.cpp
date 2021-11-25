@@ -22,6 +22,9 @@ using std::strcpy;
 #include <cctype>
 using std::tolower;
 
+#include <fstream>
+using std::ofstream;
+
 //structs 
 struct Thing{
     string sayThis;
@@ -33,26 +36,28 @@ struct Thing{
 // Declaring function prototypes.
 void print_id(string lab_desc);
 bool inputValid(string &buffer);
-
+void fileOutput(ofstream &fout, Thing *p);
+void deallocate(Thing *p);
 //tree layout
+
 /*
-                                     is it a concrete noun?
-                        /                                                                              \
-                     yes                                                                                no
-                    /                                                                                    \
-                    is it alive?                                                                                is it a feeling?
+                                                              is it a concrete noun?
+                           /                                                                                 \
+                          yes                                                                                 no
+                         /                                                                                      \
+                       is it alive?                                                                              is it a feeling?
                /                         \                                                          /                                         \
               yes                         no                                                       yes                                         no
              /                              \                                                     /                                              \
-does it live on land?                      is it in the sky?                                is it a good feeling?                                 can it be a characteristic?
-          /      \                        /                   \                                /                 \                                /                   \
-        yes      no                      yes                   no                             yes                 no                             yes                  no 
-       /           \                    /                        \                           /                      \                           /                       \
-    can it fly?   can it swim?  does it fall down to earth?    can you climb it?       is it for another person?     associated w red?       good to be/have?         can it be an action?        
-    /      \       /     \            /      \                   /       \                 /       \                    /       \            /     \                    /        \
-  yes      no     yes    no         yes      no                yes       no               yes        no                yes       no        yes     no                 yes        no
-  /         \     /        \         /        \               /            \             /            \                /          \        /        \                 /            \
-pidgeon    bear  salmon   seaweed  rain      cloud          mountain       lake        love          joy             anger    loneliness   charity   insomnia      movement        future
+    does it live on land?                    is it in the sky?                                is it a good feeling?                                 can it be a characteristic?
+          /      \                         /                   \                                /                 \                                /                       \
+        yes       no                      yes                   no                             yes                 no                             yes                       no 
+       /            \                    /                        \                           /                     \                            /                            \
+    can it fly?   can it swim?  does it fall down to earth?    can you climb it?       is it for another person?     associated w red?       good to be/have?           can it be an action?        
+    /     \         /    \             /    \                   /       \                 /       \                   /     \                   /     \                     /        \
+  yes     no       yes    no         yes     no                yes       no              yes       no               yes      no                yes     no                  yes        no
+  /         \     /        \         /        \               /            \            /           \               /         \               /         \                 /             \
+pidgeon    bear salmon   seaweed  rain      cloud          mountain       lake        love          joy            anger   loneliness      charity   insomnia          movement        future
 */
 
 
@@ -117,33 +122,60 @@ int main() {
       //input validation loop
       while(true){
         cout << temp->sayThis ;
-        cout << " [yes / no] ";
+        cout << " [y / n] ";
         getline(cin, buffer); 
         if(inputValid(buffer)) break;
-        else cout << "please enter [yes / no]" << endl;
+        else cout << "please enter [y / n]" << endl;
       }
 
-      if(buffer == "yes") temp = temp->yes;
-      else if(buffer == "no") temp = temp->no;
+      if(buffer == "y") temp = temp->yes;
+      else if(buffer == "n") temp = temp->no;
   }
   cout << "Guess ready!" << endl;
   cout << answer << endl;
+
+  //file output
+  ofstream fout;
+  fout.open("ai.txt");
+  fileOutput(fout, top);
+  fout.close();
+
+  cout << "starting out" << endl;
+  //deallocate all nodes 
+  deallocate(top);
+  if(top == nullptr) cout << "top was null" << endl;
 
   return 0;
 }
 
 //TO-DO: write fxn desc
 bool inputValid(string &buffer){
-    if(buffer.length() == 0 || buffer.length() > 3) return false;
+    if(buffer.length() != 1) return false;
     else{
         //convert to lowercase
-        for(int i = 0; i < buffer.length(); i++){
-            buffer[i] = tolower(buffer[i]);
-        }
-        if(buffer == "yes" || buffer == "no") return true;
+        buffer[0] = tolower(buffer[0]);
+        if(buffer == "y" || buffer == "n") return true;
         else return false;
     }   
 }//inputValid
+
+void fileOutput(ofstream &fout, Thing *p){
+    if(p == nullptr) fout << "EOF" << endl;
+    else {
+        fout << p->sayThis << endl;
+        fileOutput(fout, p->yes);
+        fileOutput(fout, p->no);
+    }
+}//outputFile
+
+void deallocate(Thing *p){
+    Thing *temp = p;
+    delete p;
+    if(temp->yes != nullptr && temp->no != nullptr){
+        deallocate(temp->yes); //TO-DO: this litreally crashes the program woo
+        deallocate(temp->no);
+    }
+}//deallocate
 
 void print_id(string lab_desc) {
   cout << "Sandhya Nayar\n";
