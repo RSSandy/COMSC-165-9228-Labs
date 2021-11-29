@@ -32,7 +32,6 @@ struct Thing{
     Thing *no;
 };
 
-//testing replit github
 
 // Declaring function prototypes.
 void print_id(string lab_desc);

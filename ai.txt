@@ -1,0 +1,63 @@
+Is it a concrete noun?
+Is it alive?
+Does it live on land?
+Can it fly?
+It's a pidgeon
+EOF
+EOF
+It's a bear
+EOF
+EOF
+Can it swim?
+It's salmon
+EOF
+EOF
+It's seaweed
+EOF
+EOF
+Is it in the sky?
+Does it fall down to earth?
+It's rain
+EOF
+EOF
+It's a cloud
+EOF
+EOF
+Can you climb it?
+It's a mountain
+EOF
+EOF
+It's a lake
+EOF
+EOF
+Is it a feeling?
+Is it a good feeling?
+Is it for another person?
+It's love
+EOF
+EOF
+It's joy
+EOF
+EOF
+Is it associated with the color red?
+It's anger
+EOF
+EOF
+It's loneliness
+EOF
+EOF
+Can it be a characteristic?
+Is it good to be/have?
+It's charity
+EOF
+EOF
+It's insomnia
+EOF
+EOF
+Can it be an action?
+It's movement
+EOF
+EOF
+It's the future
+EOF
+EOF

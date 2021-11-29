@@ -1,0 +1,2 @@
+language = "bash"
+run = "clang++ lab8.cpp; ./a.out"
