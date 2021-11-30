@@ -24,6 +24,7 @@ using std::tolower;
 
 #include <fstream>
 using std::ofstream;
+using std::ifstream;
 
 //structs 
 struct Thing{
@@ -38,6 +39,8 @@ void print_id(string lab_desc);
 bool inputValid(string &buffer);
 void fileOutput(ofstream &fout, Thing *p);
 void deallocate(Thing *p);
+Thing *serializeUp(ifstream& fin);
+
 //tree layout
 
 /*
@@ -64,47 +67,23 @@ pidgeon    bear salmon   seaweed  rain      cloud          mountain       lake  
 int main() {
   print_id("Lab 8: Artificial Intelligence with Innate Knowledge");
 
-  //answers
-  Thing a = {"It's a pidgeon"};
-  Thing b = {"It's a bear"};
-  Thing c = {"It's salmon"};
-  Thing d = {"It's seaweed"};
-  Thing e = {"It's rain"};
-  Thing f = {"It's a cloud"};
-  Thing g = {"It's a mountain"};
-  Thing h = {"It's a lake"};
-  Thing i = {"It's love"};
-  Thing j = {"It's joy"};
-  Thing k = {"It's anger"};
-  Thing l = {"It's loneliness"};
-  Thing m = {"It's charity"};
-  Thing n = {"It's insomnia"};
-  Thing o = {"It's movement"};
-  Thing p = {"It's the future"};
+  //get nodes from file
+  Thing *top;
+  ifstream fin;
+  fin.open("ai.txt");
+  if (fin.good())
+  {  
+    // create a node and fill with line from file, and attach all descendent nodes
+    top = serializeUp(fin);
+    fin.close();
+  }
+  else
+  {
+    top = new Thing;
+    top->sayThis = "It's a bunny";
+    top->yes = top->no = 0;
+  }
 
-  //questions : bottom level / level 4
-  Thing ab = {"Can it fly?", &a, &b};
-  Thing cd = {"Can it swim?", &c, &d};
-  Thing ef = {"Does it fall down to earth?", &e, &f};
-  Thing gh = {"Can you climb it?", &g, &h};
-  Thing ij = {"Is it for another person?", &i, &j};
-  Thing kl = {"Is it associated with the color red?", &k, &l};
-  Thing mn = {"Is it good to be/have?", &m, &n};
-  Thing op = {"Can it be an action?", &o, &p};
-
-  //questions: level 3
-  Thing abcd = {"Does it live on land?", &ab, &cd};
-  Thing efgh = {"Is it in the sky?", &ef, &gh};
-  Thing ijkl = {"Is it a good feeling?", &ij, &kl};
-  Thing mnop = {"Can it be a characteristic?", &mn, &op};
-
-  //questions: level 2
-  Thing one  =  {"Is it alive?", &abcd, &efgh};
-  Thing two = {"Is it a feeling?" , &ijkl, &mnop};
-
-  //questions: top level / level 1
-  Thing first = {"Is it a concrete noun?", &one, &two};
-  Thing *top = &first; //full tree
 
   //user explanation
   cout << "Answer my questions and I'll guess what noun you're thinking about." << endl;
@@ -131,7 +110,7 @@ int main() {
       if(buffer == "y") temp = temp->yes;
       else if(buffer == "n") temp = temp->no;
   }
-  cout << "Guess ready!" << endl;
+  cout << "I have my guess!" << endl;
   cout << answer << endl;
 
   //file output
@@ -139,16 +118,21 @@ int main() {
   fout.open("ai.txt");
   fileOutput(fout, top);
   fout.close();
+  top = nullptr;
 
-  cout << "starting out" << endl;
-  //deallocate all nodes 
+  
+  // Deallocate all nodes
   deallocate(top);
-  if(top == nullptr) cout << "top was null" << endl;
 
   return 0;
-}
+}//main
 
-//TO-DO: write fxn desc
+/*********************************************************************
+*Function: checks if user input is 'y' or 'n', converts to lowercase
+*Parameters: 
+  *string buffer: user input into a string variable
+*Return: returns whether or not buffer is valid input [BOOL]
+*********************************************************************/
 bool inputValid(string &buffer){
     if(buffer.length() != 1) return false;
     else{
@@ -159,22 +143,50 @@ bool inputValid(string &buffer){
     }   
 }//inputValid
 
+/*********************************************************************
+*Function: iterates through tree and outputs content into file
+*Parameters: 
+  *ofstream &fout: edit file within function
+  *Thing *p: pointer to top of binary tree
+*Return: NONE
+*********************************************************************/
 void fileOutput(ofstream &fout, Thing *p){
     if(p == nullptr) fout << "EOF" << endl;
     else {
         fout << p->sayThis << endl;
         fileOutput(fout, p->yes);
         fileOutput(fout, p->no);
-    }
+    } 
 }//outputFile
 
-void deallocate(Thing *p){
-    Thing *temp = p;
-    delete p;
-    if(temp->yes != nullptr && temp->no != nullptr){
-        deallocate(temp->yes); //TO-DO: this litreally crashes the program woo
-        deallocate(temp->no);
-    }
+/*********************************************************************
+*Function: takes input from file and puts it into tree
+*Parameters: 
+  *ifstream &fin: open and read from file within function
+*Return: pointer to top of binary tree
+*********************************************************************/
+Thing *serializeUp(ifstream& fin){
+  string buf;
+  getline(fin, buf);
+  if (buf == "EOF") return nullptr;
+  Thing* p = new Thing;
+  p->sayThis = buf;
+  p->yes = serializeUp(fin);
+  p->no = serializeUp(fin);
+  return p;
+}///serializeUp
+
+/*********************************************************************
+*Function: deallocates nodes of binary tree
+*Parameters: 
+  *Thing *temp: pointer to top of binary tree
+*Return: NONE
+*********************************************************************/
+void deallocate(Thing *temp){
+  if (temp == 0) return;
+  deallocate(temp->yes);
+  deallocate(temp->no);
+  delete temp;
 }//deallocate
 
 void print_id(string lab_desc) {
